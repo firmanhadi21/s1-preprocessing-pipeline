@@ -2,6 +2,44 @@
 
 Simple, proven workflow for preprocessing Sentinel-1 GRD data using ESA SNAP.
 
+## Why SNAP Instead of Google Earth Engine?
+
+Many users prefer Google Earth Engine (GEE) for Sentinel-1 processing because it's fast and convenient. However, there are important reasons to use ESA SNAP instead:
+
+### 1. Complete Processing Chain
+
+GEE's Sentinel-1 preprocessing is **incomplete**. The GEE backscatter data lacks critical steps that affect data quality:
+
+| Processing Step | SNAP | GEE |
+|-----------------|------|-----|
+| Apply Orbit File | Yes | Yes |
+| Thermal Noise Removal | Yes | Partial |
+| Calibration | Yes | Yes |
+| **Terrain Flattening** | Yes | **No** |
+| Terrain Correction | Yes | Yes |
+| Speckle Filtering | Yes | No (manual) |
+
+**Terrain Flattening** is essential for accurate backscatter analysis in mountainous or hilly areas. Without it, the backscatter values are affected by local incidence angle variations caused by terrain slope.
+
+### 2. Commercial Use & Licensing
+
+GEE has licensing restrictions:
+- GEE is **free only for research, education, and non-profit use**
+- **Commercial applications require a paid Google Earth Engine license**
+- Using GEE-processed data in commercial products may violate terms of service
+
+With SNAP:
+- ESA SNAP is **free and open-source** (GPL-3.0)
+- Sentinel-1 data is **free and open** under Copernicus license
+- **No restrictions** on commercial use of your processed outputs
+
+### 3. Independence & Reproducibility
+
+- **No vendor lock-in**: Your workflow doesn't depend on Google's cloud service
+- **Offline processing**: Works without internet after downloading data
+- **Full control**: Complete transparency over every processing step
+- **Long-term reproducibility**: Not affected by GEE API changes or service availability
+
 ## Workflow
 
 1. **Search** Sentinel-1 scenes on [ASF Vertex](https://search.asf.alaska.edu/)
