@@ -121,6 +121,53 @@ python s1_process_period_dir.py --mosaic
 python s1_process_period_dir.py --preview
 ```
 
+## Automatic Pipeline (EXPERIMENTAL)
+
+> ⚠️ **WARNING**: This feature is **EXPERIMENTAL** and has **NOT been fully tested**. Use at your own risk. For production use, we recommend the manual workflow above.
+
+For users who want a fully automated experience, we provide `s1_auto_pipeline.py` that handles everything from download to mosaic:
+
+```bash
+# Install additional dependencies
+pip install asf-search shapely
+
+# Run automatic pipeline
+python s1_auto_pipeline.py \
+    --bbox 110.0 -7.5 111.0 -6.5 \
+    --start-date 2024-01-01 \
+    --end-date 2024-01-12 \
+    --output-dir ./my_output
+```
+
+### Parameters
+
+| Parameter | Description | Example |
+|-----------|-------------|---------|
+| `--bbox` | Bounding box (min_lon min_lat max_lon max_lat) | `110.0 -7.5 111.0 -6.5` |
+| `--start-date` | Start date (YYYY-MM-DD) | `2024-01-01` |
+| `--end-date` | End date (YYYY-MM-DD) | `2024-01-12` |
+| `--output-dir` | Output directory | `./my_output` |
+| `--resolution` | Resolution in meters (10, 20, 50, 100) | `20` |
+| `--max-scenes` | Maximum scenes to download | `50` |
+
+### Known Limitations
+
+- ❌ ASF download may fail for some regions or time periods
+- ❌ Large areas may exceed memory limits
+- ❌ Network interruptions can cause incomplete downloads
+- ❌ Some Sentinel-1 scenes may have missing data
+- ❌ No authentication support for restricted datasets
+
+### When to Use Manual vs Automatic
+
+| Use Case | Recommendation |
+|----------|----------------|
+| Production / operational use | **Manual workflow** |
+| Quality-critical applications | **Manual workflow** |
+| Learning / experimentation | Automatic pipeline |
+| Quick preview of an area | Automatic pipeline |
+| Large area processing | **Manual workflow** |
+
 ## Processing Chain
 
 The SNAP preprocessing applies:
@@ -157,7 +204,8 @@ export PATH=$PATH:/path/to/snap/bin
 
 ```
 s1-preprocessing-pipeline/
-├── s1_process_period_dir.py     # Main processing script
+├── s1_process_period_dir.py     # Main processing script (RECOMMENDED)
+├── s1_auto_pipeline.py          # Automatic pipeline (EXPERIMENTAL)
 ├── graphs/
 │   ├── sen1_preprocessing-gpt.xml       # 10m resolution
 │   ├── sen1_preprocessing-gpt-20m.xml   # 20m resolution
