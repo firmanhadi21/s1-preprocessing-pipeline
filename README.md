@@ -194,23 +194,299 @@ The SNAP preprocessing applies:
 ## Requirements
 
 - **Python 3.8+** with `rasterio`, `numpy`, `matplotlib`
-- **ESA SNAP** with `gpt` command in PATH
+- **ESA SNAP 10.0+** with Sentinel-1 Toolbox
 - **GDAL** with `gdal_merge.py`
 
-### Install Python dependencies
+---
+
+## Installation Guide
+
+### Step 1: Install Python Dependencies
 
 ```bash
 pip install rasterio numpy matplotlib
 ```
 
-### Install ESA SNAP
-
-Download from: https://step.esa.int/main/download/snap-download/
-
-Add SNAP bin directory to PATH:
+For the automatic pipeline (optional):
 ```bash
-export PATH=$PATH:/path/to/snap/bin
+pip install asf-search shapely
 ```
+
+### Step 2: Install GDAL
+
+<details>
+<summary><b>Linux (Ubuntu/Debian)</b></summary>
+
+```bash
+sudo apt update
+sudo apt install gdal-bin python3-gdal
+```
+</details>
+
+<details>
+<summary><b>macOS</b></summary>
+
+```bash
+brew install gdal
+```
+</details>
+
+<details>
+<summary><b>Windows</b></summary>
+
+Install via OSGeo4W: https://trac.osgeo.org/osgeo4w/
+
+Or use conda:
+```bash
+conda install -c conda-forge gdal
+```
+</details>
+
+Verify installation:
+```bash
+gdal_merge.py --version
+```
+
+### Step 3: Install ESA SNAP
+
+#### Download SNAP
+
+1. Go to: **https://step.esa.int/main/download/snap-download/**
+2. Download the installer for your operating system:
+   - Linux: `esa-snap_sentinel_linux-10.0.0.sh`
+   - macOS: `esa-snap_sentinel_macos-10.0.0.dmg`
+   - Windows: `esa-snap_sentinel_windows-x64-10.0.0.exe`
+
+#### Install SNAP
+
+<details>
+<summary><b>Linux</b></summary>
+
+```bash
+# Make installer executable
+chmod +x esa-snap_sentinel_linux-10.0.0.sh
+
+# Run installer (GUI mode)
+./esa-snap_sentinel_linux-10.0.0.sh
+
+# Or run in console mode (for servers without GUI)
+./esa-snap_sentinel_linux-10.0.0.sh -c
+
+# Default installation path: ~/snap
+# Recommended: Install to /opt/snap or ~/snap
+```
+
+**Important settings during installation:**
+- ✅ Install Sentinel-1 Toolbox
+- ✅ Configure SNAP for use with Python
+- Set max memory to at least **16 GB** (or 75% of your RAM)
+
+</details>
+
+<details>
+<summary><b>macOS</b></summary>
+
+1. Open the `.dmg` file
+2. Drag SNAP to Applications folder
+3. On first run, right-click and select "Open" to bypass Gatekeeper
+
+**Installation path:** `/Applications/snap/`
+
+</details>
+
+<details>
+<summary><b>Windows</b></summary>
+
+1. Run the installer as Administrator
+2. Follow the installation wizard
+3. **Important settings:**
+   - ✅ Install Sentinel-1 Toolbox
+   - Set max memory to at least **16 GB**
+
+**Default installation path:** `C:\Program Files\snap\`
+
+</details>
+
+#### Configure SNAP for Command Line (GPT)
+
+The Graph Processing Tool (`gpt`) must be accessible from command line.
+
+<details>
+<summary><b>Linux</b></summary>
+
+Add to `~/.bashrc` or `~/.zshrc`:
+```bash
+# SNAP GPT
+export PATH=$PATH:~/snap/bin
+
+# Or if installed to /opt/snap:
+export PATH=$PATH:/opt/snap/bin
+```
+
+Apply changes:
+```bash
+source ~/.bashrc
+```
+
+</details>
+
+<details>
+<summary><b>macOS</b></summary>
+
+Add to `~/.zshrc` or `~/.bash_profile`:
+```bash
+# SNAP GPT
+export PATH=$PATH:/Applications/snap/bin
+```
+
+Apply changes:
+```bash
+source ~/.zshrc
+```
+
+</details>
+
+<details>
+<summary><b>Windows</b></summary>
+
+1. Open System Properties → Advanced → Environment Variables
+2. Under "System Variables", find `Path` and click Edit
+3. Add new entry: `C:\Program Files\snap\bin`
+4. Click OK and restart your terminal
+
+Or use PowerShell (temporary):
+```powershell
+$env:Path += ";C:\Program Files\snap\bin"
+```
+
+</details>
+
+#### Verify SNAP Installation
+
+```bash
+gpt --version
+```
+
+Expected output:
+```
+SNAP Graph Processing Tool (GPT), version 10.0
+```
+
+#### Configure SNAP Memory (Important!)
+
+SNAP needs sufficient memory for Sentinel-1 processing. Edit the configuration:
+
+<details>
+<summary><b>Linux/macOS</b></summary>
+
+Edit `~/snap/etc/snap.properties` (or `/opt/snap/etc/snap.properties`):
+```properties
+# Set max memory (recommended: 75% of your RAM)
+snap.jai.tileCacheSize=16384
+
+# Set parallelism
+snap.parallelism=4
+```
+
+Edit `~/snap/bin/gpt.vmoptions`:
+```
+-Xmx16G
+```
+
+</details>
+
+<details>
+<summary><b>Windows</b></summary>
+
+Edit `C:\Program Files\snap\etc\snap.properties`:
+```properties
+snap.jai.tileCacheSize=16384
+snap.parallelism=4
+```
+
+Edit `C:\Program Files\snap\bin\gpt.vmoptions`:
+```
+-Xmx16G
+```
+
+</details>
+
+#### Update SNAP and Install Sentinel-1 Toolbox
+
+First run or after installation, update SNAP modules:
+
+```bash
+# Update all modules
+snap --nosplash --nogui --modules --update-all
+
+# Or via SNAP Desktop:
+# Help → Check for Updates
+```
+
+Ensure **Sentinel-1 Toolbox** is installed:
+```bash
+# List installed modules
+snap --nosplash --nogui --modules --list
+```
+
+Look for: `org.esa.s1tbx.*` modules
+
+### Step 4: Test the Installation
+
+Create a test to verify everything works:
+
+```bash
+# Test GPT
+gpt --help
+
+# Test GDAL
+gdal_merge.py --help
+
+# Test Python dependencies
+python -c "import rasterio; import numpy; import matplotlib; print('OK')"
+```
+
+### Troubleshooting
+
+<details>
+<summary><b>GPT not found</b></summary>
+
+- Verify SNAP bin directory is in PATH
+- Try full path: `~/snap/bin/gpt --version`
+- Restart terminal after modifying PATH
+
+</details>
+
+<details>
+<summary><b>Out of memory errors</b></summary>
+
+- Increase `-Xmx` in `gpt.vmoptions` (e.g., `-Xmx24G` for 24GB)
+- Close other applications during processing
+- Use lower resolution (50m or 100m) for testing
+
+</details>
+
+<details>
+<summary><b>Missing Sentinel-1 operators</b></summary>
+
+- Open SNAP Desktop
+- Go to Tools → Plugins → Available Plugins
+- Install "Sentinel-1 Toolbox"
+- Restart SNAP
+
+</details>
+
+<details>
+<summary><b>DEM download fails</b></summary>
+
+SNAP downloads SRTM DEM automatically. If it fails:
+- Check internet connection
+- Configure proxy in SNAP: Tools → Options → General → Proxy
+- Manually download DEM and configure in SNAP
+
+</details>
+
+---
 
 ## Files
 
