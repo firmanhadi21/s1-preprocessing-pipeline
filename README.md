@@ -1,5 +1,11 @@
 # Sentinel-1 SAR Preprocessing Pipeline
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.8+](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![ESA SNAP](https://img.shields.io/badge/ESA-SNAP-green.svg)](https://step.esa.int/main/download/snap-download/)
+[![GitHub stars](https://img.shields.io/github/stars/firmanhadi21/s1-preprocessing-pipeline.svg)](https://github.com/firmanhadi21/s1-preprocessing-pipeline/stargazers)
+[![GitHub issues](https://img.shields.io/github/issues/firmanhadi21/s1-preprocessing-pipeline.svg)](https://github.com/firmanhadi21/s1-preprocessing-pipeline/issues)
+
 Simple, proven workflow for preprocessing Sentinel-1 GRD data using ESA SNAP.
 
 ## Why SNAP Instead of Google Earth Engine?
