@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: SNAP Forum
+    url: https://forum.step.esa.int/
+    about: For SNAP-specific questions, visit the official ESA SNAP forum
+  - name: ASF Data Search
+    url: https://search.asf.alaska.edu/
+    about: Search and download Sentinel-1 data from Alaska Satellite Facility
+  - name: GEE S1 ARD Framework
+    url: https://github.com/adugnag/gee_s1_ard
+    about: For GEE-based Sentinel-1 processing (alternative approach)
