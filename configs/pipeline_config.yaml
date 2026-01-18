@@ -1,0 +1,61 @@
+# Automated Rice Growth Stage Mapping Pipeline Configuration
+# Edit this file to customize your pipeline
+
+directories:
+  # Main working directory for pipeline outputs
+  work_dir: ./workspace
+
+data_acquisition:
+  # Download source: 'asf' (RECOMMENDED - free, no registration) or 'cdse' (Copernicus Data Space)
+  # Note: ESA SciHub is deprecated. Use ASF or CDSE instead.
+  download_source: asf
+
+  # Area of Interest (AOI) as bounding box
+  # Format: [min_longitude, min_latitude, max_longitude, max_latitude]
+  # Example for Java Island, Indonesia:
+  aoi_bbox: [106.0, -8.0, 115.0, -5.0]
+
+  # Time period for data acquisition
+  start_date: '2024-01-01'
+  end_date: '2024-12-31'
+
+  # Orbit direction: ASCENDING or DESCENDING
+  orbit_direction: ASCENDING
+
+  # Copernicus Data Space Ecosystem credentials (only needed if using download_source: cdse)
+  # Register at: https://dataspace.copernicus.eu/
+  # RECOMMENDATION: Use 'asf' instead - no registration required!
+  cdse_username: null
+  cdse_password: null
+
+preprocessing:
+  # Path to SNAP GPT executable (null = auto-detect)
+  snap_gpt_path: null
+
+  # SNAP graph XML file for preprocessing
+  graph_xml: sen1_preprocessing-gpt.xml
+
+  # SNAP cache size (adjust based on available RAM)
+  # Examples: '4G', '8G', '16G'
+  cache_size: '16G'
+
+training:
+  # Model type: 'mlp', 'cnn', or 'cnn_lstm' (recommended: cnn_lstm)
+  model_type: cnn_lstm
+
+  # Use data augmentation for minority classes
+  use_augmentation: true
+
+  # Use class weighting for imbalanced data
+  use_class_weights: true
+
+  # Use SMOTE oversampling
+  use_smote: true
+
+prediction:
+  # List of periods to predict (based on available bands)
+  # Minimum period is 7 (needs 7 temporal bands)
+  periods: [8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+
+  # Use optimized prediction (10-50x faster)
+  use_optimized: true

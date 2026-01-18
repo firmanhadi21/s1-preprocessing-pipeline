@@ -1,0 +1,49 @@
+# Pipeline Configuration - Java Island Both Orbits
+# GDAL-based mosaicking with Int16 output
+
+directories:
+  work_dir: ./workspace_java_both_orbits
+
+data_acquisition:
+  download_source: asf
+
+  # Area of Interest - Java Island
+  # West (Banten) to East (East Java)
+  aoi_bbox: [105.2, -8.8, 114.5, -5.9]
+
+  # Full year for 31 periods
+  start_date: '2024-01-01'
+  end_date: '2024-12-31'
+
+  orbit_direction: null  # Both ascending and descending
+
+  cdse_username: null
+  cdse_password: null
+
+preprocessing:
+  snap_gpt_path: /home/unika_sianturi/work/idmai/esa-snap/bin/gpt
+  graph_xml: sen1_preprocessing-gpt.xml
+  cache_size: '16G'
+
+mosaicking:
+  # GDAL-based mosaicking using gdal_merge.py
+  # Simpler and more reliable than OTB for Sentinel-1 data
+  method: gdal_merge
+  # Data is Int16 (dB values, scaled by SNAP)
+  output_type: Int16
+  # NoData value: -32768 for Int16
+  nodata: -32768
+  # Compression: LZW with tiling for efficient I/O
+  compression: LZW
+  tiled: true
+  bigtiff: true
+
+training:
+  model_type: cnn_lstm
+  use_augmentation: true
+  use_class_weights: true
+  use_smote: true
+
+prediction:
+  periods: [8, 9, 10]
+  use_optimized: true
