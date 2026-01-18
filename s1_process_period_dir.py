@@ -40,22 +40,40 @@ class PeriodDirectoryProcessor:
     """
 
     def __init__(self, period_dir: str = '.',
-                 snap_gpt_path: str = '/home/unika_sianturi/work/idmai/esa-snap/bin/gpt',
-                 graph_xml: str = '/home/unika_sianturi/work/rice-growth-stage-mapping/sen1_preprocessing-gpt-20m.xml',
+                 snap_gpt_path: str = 'gpt',
+                 graph_xml: str = None,
+                 resolution: int = 20,
                  cache_size: str = '16G'):
         """
         Initialize processor
 
         Args:
             period_dir: Period directory (e.g., p15/)
-            snap_gpt_path: Path to SNAP GPT executable
-            graph_xml: SNAP processing graph XML file
+            snap_gpt_path: Path to SNAP GPT executable (default: 'gpt' from PATH)
+            graph_xml: SNAP processing graph XML file (auto-selected if None)
+            resolution: Output resolution in meters (10, 20, 50, or 100)
             cache_size: SNAP cache size
         """
         self.period_dir = Path(period_dir).resolve()
         self.snap_gpt_path = snap_gpt_path
-        self.graph_xml = graph_xml
+        self.resolution = resolution
         self.cache_size = cache_size
+
+        # Auto-select graph based on resolution if not specified
+        if graph_xml is None:
+            script_dir = Path(__file__).parent
+            if resolution == 10:
+                self.graph_xml = str(script_dir / 'graphs' / 'sen1_preprocessing-gpt.xml')
+            elif resolution == 20:
+                self.graph_xml = str(script_dir / 'graphs' / 'sen1_preprocessing-gpt-20m.xml')
+            elif resolution == 50:
+                self.graph_xml = str(script_dir / 'graphs' / 'sen1_preprocessing-gpt-50m.xml')
+            elif resolution == 100:
+                self.graph_xml = str(script_dir / 'graphs' / 'sen1_preprocessing-gpt-100m.xml')
+            else:
+                raise ValueError(f"Unsupported resolution: {resolution}. Use 10, 20, 50, or 100.")
+        else:
+            self.graph_xml = graph_xml
 
         # Setup directories
         self.downloads_dir = self.period_dir / 'downloads'
@@ -418,9 +436,15 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-  # Process current directory (all steps)
-  cd workspace_java_both_orbits/year_2024/p15
+  # Process current directory at 20m resolution (default)
+  cd workspace/year_2024/p15
   python s1_process_period_dir.py --run-all
+
+  # Process at different resolutions
+  python s1_process_period_dir.py --run-all --resolution 10   # 10m (highest detail)
+  python s1_process_period_dir.py --run-all --resolution 20   # 20m (recommended)
+  python s1_process_period_dir.py --run-all --resolution 50   # 50m (faster)
+  python s1_process_period_dir.py --run-all --resolution 100  # 100m (quickest)
 
   # Individual steps
   python s1_process_period_dir.py --preprocess
@@ -435,12 +459,12 @@ Examples:
 
     parser.add_argument('--period-dir', default='.',
                         help='Period directory (default: current directory)')
-    parser.add_argument('--snap-gpt-path',
-                        default='/home/unika_sianturi/work/idmai/esa-snap/bin/gpt',
-                        help='Path to SNAP GPT executable')
-    parser.add_argument('--graph-xml',
-                        default='/home/unika_sianturi/work/rice-growth-stage-mapping/sen1_preprocessing-gpt.xml',
-                        help='SNAP processing graph XML file')
+    parser.add_argument('--resolution', type=int, default=20, choices=[10, 20, 50, 100],
+                        help='Output resolution in meters (default: 20)')
+    parser.add_argument('--snap-gpt-path', default='gpt',
+                        help='Path to SNAP GPT executable (default: gpt from PATH)')
+    parser.add_argument('--graph-xml', default=None,
+                        help='SNAP processing graph XML file (auto-selected based on resolution)')
     parser.add_argument('--cache-size', default='16G',
                         help='SNAP cache size (default: 16G)')
 
@@ -463,6 +487,7 @@ Examples:
         period_dir=args.period_dir,
         snap_gpt_path=args.snap_gpt_path,
         graph_xml=args.graph_xml,
+        resolution=args.resolution,
         cache_size=args.cache_size
     )
 
