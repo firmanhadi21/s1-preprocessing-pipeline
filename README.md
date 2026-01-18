@@ -71,6 +71,18 @@ p15/
     └── p15_preview.png
 ```
 
+## Sample Output
+
+Sentinel-1 VH backscatter mosaics over Java Island, Indonesia (20m resolution):
+
+| Period 1 (Jan 1-12) | Period 2 (Jan 13-24) |
+|:---:|:---:|
+| ![P1](examples/p1_preview.png) | ![P2](examples/p2_preview.png) |
+
+| Period 3 (Jan 25 - Feb 5) | Period 4 (Feb 6-17) |
+|:---:|:---:|
+| ![P3](examples/p3_preview.png) | ![P4](examples/p4_preview.png) |
+
 ## Resolution Options
 
 ```bash
@@ -145,6 +157,12 @@ s1-preprocessing-pipeline/
 │   ├── sen1_preprocessing-gpt-20m.xml   # 20m resolution
 │   ├── sen1_preprocessing-gpt-50m.xml   # 50m resolution
 │   └── sen1_preprocessing-gpt-100m.xml  # 100m resolution
+├── examples/                    # Sample output previews
+│   ├── p1_preview.png
+│   ├── p2_preview.png
+│   ├── p3_preview.png
+│   └── p4_preview.png
+├── LICENSE
 └── README.md
 ```
 
