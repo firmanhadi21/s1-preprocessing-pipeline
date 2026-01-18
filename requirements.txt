@@ -1,0 +1,12 @@
+# Sentinel-1 Preprocessing Pipeline - Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# Core dependencies (required)
+rasterio>=1.3.0
+numpy>=1.21.0
+matplotlib>=3.5.0
+
+# Automatic pipeline dependencies (optional)
+# Uncomment if using s1_auto_pipeline.py
+# asf-search>=6.0.0
+# shapely>=2.0.0
