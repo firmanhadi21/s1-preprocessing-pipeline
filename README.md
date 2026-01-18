@@ -14,18 +14,30 @@ Many users prefer Google Earth Engine (GEE) for Sentinel-1 processing because it
 
 ### 1. Complete Processing Chain
 
-GEE's Sentinel-1 preprocessing is **incomplete**. The GEE backscatter data lacks critical steps that affect data quality:
+GEE's Sentinel-1 preprocessing is **incomplete**. According to [Google's official documentation](https://developers.google.com/earth-engine/datasets/catalog/COPERNICUS_S1_GRD), GEE only applies: thermal noise removal, radiometric calibration, and terrain correction. Critical steps are missing:
 
-| Processing Step | SNAP | GEE |
-|-----------------|------|-----|
-| Apply Orbit File | Yes | Yes |
-| Thermal Noise Removal | Yes | Partial |
-| Calibration | Yes | Yes |
-| **Terrain Flattening** | Yes | **No** |
-| Terrain Correction | Yes | Yes |
-| Speckle Filtering | Yes | No (manual) |
+| Processing Step | SNAP | GEE | Impact |
+|-----------------|:----:|:---:|--------|
+| Apply Orbit File | ✅ | ✅ | Geometric accuracy |
+| Thermal Noise Removal | ✅ | ✅ | Reduce noise floor |
+| Radiometric Calibration | ✅ | ✅ | Physical units (σ⁰, β⁰, γ⁰) |
+| **Terrain Flattening** | ✅ | ❌ | **Corrects slope-induced radiometric distortions** |
+| Terrain Correction | ✅ | ✅ | Geometric correction |
+| Speckle Filtering | ✅ | ❌ | Reduce SAR speckle noise |
+| Border Noise Removal | ✅ | ⚠️ | Remove edge artifacts |
 
-**Terrain Flattening** is essential for accurate backscatter analysis in mountainous or hilly areas. Without it, the backscatter values are affected by local incidence angle variations caused by terrain slope.
+#### Why Terrain Flattening Matters
+
+**Terrain Flattening** (radiometric terrain normalization) is essential for accurate backscatter analysis:
+
+- Without it, backscatter values on slopes are **biased by local incidence angle**, not actual surface properties
+- Forested hillsides facing the sensor appear brighter than those facing away
+- Agricultural fields on slopes show artificial variation unrelated to crop conditions
+- This bias **cannot be corrected after terrain correction** - it must be done before
+
+This is why researchers developed additional frameworks like [gee_s1_ard](https://github.com/adugnag/gee_s1_ard) to add radiometric terrain normalization to GEE - but it's complex and computationally expensive in GEE.
+
+**With SNAP, terrain flattening is a standard step** in the processing chain.
 
 ### 2. Commercial Use & Licensing
 
