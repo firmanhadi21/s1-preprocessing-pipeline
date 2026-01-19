@@ -487,19 +487,25 @@ Examples:
         cache_size=args.cache_size
     )
 
-    # Execute requested actions
+    # Execute requested actions (supports multiple flags)
     if args.run_all:
         processor.run_all()
-    elif args.preprocess:
-        processor.step1_preprocess()
-    elif args.convert:
-        processor.step2_convert_to_geotiff()
-    elif args.mosaic:
-        processor.step3_mosaic()
-    elif args.preview:
-        processor.step4_create_preview()
     else:
-        parser.print_help()
+        ran_any = False
+        if args.preprocess:
+            processor.step1_preprocess()
+            ran_any = True
+        if args.convert:
+            processor.step2_convert_to_geotiff()
+            ran_any = True
+        if args.mosaic:
+            processor.step3_mosaic()
+            ran_any = True
+        if args.preview:
+            processor.step4_create_preview()
+            ran_any = True
+        if not ran_any:
+            parser.print_help()
 
 
 if __name__ == '__main__':
