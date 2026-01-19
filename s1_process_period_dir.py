@@ -282,7 +282,7 @@ class PeriodDirectoryProcessor:
             logger.info("  Overlaps will be averaged (seamless blending)")
 
             # Build gdal_merge.py command
-            # Note: Input files from SNAP have 0 as nodata
+            # Note: Input GeoTIFFs have -32768 as nodata (scaled dB values)
             cmd = [
                 'gdal_merge.py',
                 '-ot', 'Int16',
@@ -291,7 +291,7 @@ class PeriodDirectoryProcessor:
                 '-co', 'TILED=YES',
                 '-co', 'BIGTIFF=YES',
                 '-a_nodata', '-32768',
-                '-n', '0',  # Input nodata is 0 from SNAP
+                '-n', '-32768',  # Input nodata is -32768
                 '-init', '-32768',  # Initialize output with nodata
                 '-o', str(output_mosaic)
             ]
